@@ -66,7 +66,6 @@ export default {
       this.$set(this.todos[key], 'completed', !this.todos[key].completed);
     },
     changeView(type) {
-      console.log(type);
       this.viewType = type;
     },
     addTodo() {
