@@ -6,7 +6,9 @@
       type="text"
       placeholder="準備要做的任務"
       :value="newTodo"
-      @input="inputNewTodo($event)"
+      @input="inputNewTodo"
+      @keyup.esc="inputNewTodo"
+      @keyup.enter="addTodo"
       )
     .input-group-append
       button.btn.btn-primary(
@@ -24,7 +26,11 @@ export default {
   },
   methods: {
     inputNewTodo(event) {
-      this.$emit('update:newTodo', event.target.value);
+      if (event.key === 'Escape') {
+        this.$emit('update:newTodo', '');
+      } else {
+        this.$emit('update:newTodo', event.target.value);
+      }
     },
     addTodo() {
       this.$emit('click:addTodo');

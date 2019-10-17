@@ -6,8 +6,17 @@
       @click:addTodo="addTodo"
     )
     todos-list(
-      :todos="todos"
+      :todos="filteredTodos"
+      :view-type="viewType"
+      :cache-todo="cacheTodo"
+      :cache-title="cacheTitle"
+      @update:view="changeView"
       @update:Completed="clickCheckbox"
+      @update:cacheTitle="inputNewTitle"
+      @click:removeTodo="removeTodo"
+      @click:editTodo="editTodo"
+      @click:cancelEdit="cancelEdit"
+      @click:doneEdit="doneEdit"
       )
 </template>
 
@@ -27,11 +36,26 @@ export default {
       todos: [
         {
           id: '1571240683467',
-          title: '範例',
+          title: '我的第一個範例',
           completed: true,
         },
       ],
+      viewType: 2,
+      cacheTodo: {},
+      cacheTitle: '',
     };
+  },
+  computed: {
+    filteredTodos() {
+      let tmpTodo = this.todos;
+      if (this.viewType === 0) {
+        tmpTodo = this.todos.filter(todo => todo.completed === false);
+      }
+      if (this.viewType === 1) {
+        tmpTodo = this.todos.filter(todo => todo.completed === true);
+      }
+      return tmpTodo;
+    },
   },
   methods: {
     inputNewTodo(value) {
@@ -41,11 +65,36 @@ export default {
       const key = this.todos.findIndex(todo => todo.id === todoId);
       this.$set(this.todos[key], 'completed', !this.todos[key].completed);
     },
+    changeView(type) {
+      console.log(type);
+      this.viewType = type;
+    },
     addTodo() {
       const id = this.getTimestamp();
       const title = this.newTodo;
       const completed = false;
       this.todos.push({ id, title, completed });
+    },
+    removeTodo(todoId) {
+      const key = this.todos.findIndex(todo => todo.id === todoId);
+      this.$delete(this.todos, key);
+    },
+    editTodo(todo) {
+      this.cacheTodo = todo;
+      this.cacheTitle = todo.title;
+    },
+    inputNewTitle(value) {
+      this.cacheTitle = value;
+    },
+    cancelEdit() {
+      this.cacheTodo = {};
+      this.cacheTitle = '';
+    },
+    doneEdit() {
+      const key = this.todos.findIndex(todo => todo.id === this.cacheTodo.id);
+      this.$set(this.todos[key], 'title', this.cacheTitle);
+      this.cacheTodo = {};
+      this.cacheTitle = '';
     },
     // Self function
     getTimestamp() {
