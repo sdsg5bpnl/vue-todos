@@ -57,6 +57,14 @@ export default {
       return tmpTodo;
     },
   },
+  created() {
+    if (localStorage.getItem('todos')) {
+      const { data } = JSON.parse(localStorage.getItem('todos'));
+      this.todos = data;
+    } else {
+      localStorage.setItem('todos', JSON.stringify({ data: [] }));
+    }
+  },
   methods: {
     inputNewTodo(value) {
       this.newTodo = value;
@@ -64,6 +72,7 @@ export default {
     clickCheckbox(todoId) {
       const key = this.todos.findIndex(todo => todo.id === todoId);
       this.$set(this.todos[key], 'completed', !this.todos[key].completed);
+      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
     },
     changeView(type) {
       this.viewType = type;
@@ -73,10 +82,12 @@ export default {
       const title = this.newTodo;
       const completed = false;
       this.todos.push({ id, title, completed });
+      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
     },
     removeTodo(todoId) {
       const key = this.todos.findIndex(todo => todo.id === todoId);
       this.$delete(this.todos, key);
+      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
     },
     editTodo(todo) {
       this.cacheTodo = todo;
@@ -94,6 +105,7 @@ export default {
       this.$set(this.todos[key], 'title', this.cacheTitle);
       this.cacheTodo = {};
       this.cacheTitle = '';
+      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
     },
     // Self function
     getTimestamp() {
