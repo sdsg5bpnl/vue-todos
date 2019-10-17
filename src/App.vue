@@ -62,7 +62,14 @@ export default {
       const { data } = JSON.parse(localStorage.getItem('todos'));
       this.todos = data;
     } else {
-      localStorage.setItem('todos', JSON.stringify({ data: [] }));
+      const data = [
+        {
+          id: '1571240683467',
+          title: '我的第一個範例',
+          completed: true,
+        },
+      ];
+      localStorage.setItem('todos', JSON.stringify({ data }));
     }
   },
   methods: {
