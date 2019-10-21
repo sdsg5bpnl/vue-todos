@@ -109,7 +109,7 @@ export default {
     },
     // Self function
     getTimestamp() {
-      const timestamp = new Date().getTime();
+      const timestamp = new Date().getTime().toString();
       return timestamp;
     },
   },
