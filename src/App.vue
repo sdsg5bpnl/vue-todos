@@ -33,61 +33,39 @@ export default {
   data() {
     return {
       newTodo: '',
-      todos: [
-        {
-          id: '1571240683467',
-          title: '我的第一個範例',
-          completed: true,
-        },
-      ],
-      viewType: 2,
       cacheTodo: {},
       cacheTitle: '',
     };
   },
   computed: {
     filteredTodos() {
-      let tmpTodo = this.todos;
-      if (this.viewType === 0) {
-        tmpTodo = this.todos.filter(todo => todo.completed === false);
-      }
-      if (this.viewType === 1) {
-        tmpTodo = this.todos.filter(todo => todo.completed === true);
-      }
-      return tmpTodo;
+      return this.$store.getters.filteredTodos;
+    },
+    viewType() {
+      return this.$store.getters.viewType;
     },
   },
   created() {
-    if (localStorage.getItem('todos')) {
-      const { data } = JSON.parse(localStorage.getItem('todos'));
-      this.todos = data;
-    } else {
-      localStorage.setItem('todos', JSON.stringify({ data: [] }));
-    }
+    this.$store.dispatch('getTodoData');
   },
   methods: {
     inputNewTodo(value) {
       this.newTodo = value;
     },
     clickCheckbox(todoId) {
-      const key = this.todos.findIndex(todo => todo.id === todoId);
-      this.$set(this.todos[key], 'completed', !this.todos[key].completed);
-      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
+      this.$store.dispatch('switchComplete', todoId);
     },
     changeView(type) {
-      this.viewType = type;
+      this.$store.dispatch('changeView', type);
     },
     addTodo() {
       const id = this.getTimestamp();
       const title = this.newTodo;
       const completed = false;
-      this.todos.push({ id, title, completed });
-      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
+      this.$store.dispatch('addTodo', { id, title, completed });
     },
     removeTodo(todoId) {
-      const key = this.todos.findIndex(todo => todo.id === todoId);
-      this.$delete(this.todos, key);
-      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
+      this.$store.dispatch('removeTodo', todoId);
     },
     editTodo(todo) {
       this.cacheTodo = todo;
@@ -101,11 +79,11 @@ export default {
       this.cacheTitle = '';
     },
     doneEdit() {
-      const key = this.todos.findIndex(todo => todo.id === this.cacheTodo.id);
-      this.$set(this.todos[key], 'title', this.cacheTitle);
+      const todoId = this.cacheTodo.id;
+      const newTitle = this.cacheTitle;
+      this.$store.dispatch('editTodo', { todoId, newTitle });
       this.cacheTodo = {};
       this.cacheTitle = '';
-      localStorage.setItem('todos', JSON.stringify({ data: this.todos }));
     },
     // Self function
     getTimestamp() {
