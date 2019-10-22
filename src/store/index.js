@@ -3,6 +3,11 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
+// self function
+function findKey(target, id) {
+  return target.findIndex(todo => todo.id === id);
+}
+
 export default new Vuex.Store({
   state: {
     todos: [
@@ -42,18 +47,18 @@ export default new Vuex.Store({
     },
     // Todo 操作
     switchComplete(state, todoId) {
-      const key = state.todos.findIndex(todo => todo.id === todoId);
+      const key = findKey(state.todos, todoId);
       Vue.set(state.todos[key], 'completed', !state.todos[key].completed);
     },
     addTodo(state, { id, title, completed }) {
       Vue.set(state.todos, state.todos.length, { id, title, completed });
     },
     removeTodo(state, todoId) {
-      const key = state.todos.findIndex(todo => todo.id === todoId);
+      const key = findKey(state.todos, todoId);
       Vue.delete(state.todos, key);
     },
     editTodo(state, { todoId, newTitle }) {
-      const key = state.todos.findIndex(todo => todo.id === todoId);
+      const key = findKey(state.todos, todoId);
       Vue.set(state.todos[key], 'title', newTitle);
     },
   },
@@ -63,15 +68,15 @@ export default new Vuex.Store({
         const { data } = JSON.parse(localStorage.getItem('todos'));
         commit('getTodoData', data);
       } else {
-        const sampleTodo = [
+        const data = [
           {
             id: '1571240683467',
             title: '我的第一個範例',
             completed: true,
           },
         ];
-        localStorage.setItem('todos', JSON.stringify({ data: sampleTodo }));
-        commit('getTodoData', sampleTodo);
+        localStorage.setItem('todos', JSON.stringify({ data }));
+        commit('getTodoData', data);
       }
     },
     changeView({ commit }, type) {

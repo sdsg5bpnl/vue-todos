@@ -60,9 +60,11 @@ export default {
     },
     addTodo() {
       const id = this.getTimestamp();
-      const title = this.newTodo;
+      const title = this.newTodo.trim();
       const completed = false;
-      this.$store.dispatch('addTodo', { id, title, completed });
+      if (title) {
+        this.$store.dispatch('addTodo', { id, title, completed });
+      }
     },
     removeTodo(todoId) {
       this.$store.dispatch('removeTodo', todoId);
