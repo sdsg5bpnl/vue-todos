@@ -25,7 +25,7 @@ import TodosInput from './components/TodosInput.vue';
 import TodosList from './components/TodosList.vue';
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     TodosInput,
     TodosList,
